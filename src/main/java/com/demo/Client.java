@@ -3,7 +3,7 @@ package com.demo;
 import java.io.IOException;
 import com.demo.socket.SocketClient;
 
-public class App {
+public class Client {
     private static final String IP_ADDRESS = "192.168.15.11";
     private static final int TCP_PORT = 443;
 

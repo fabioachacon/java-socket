@@ -24,8 +24,8 @@ public class SocketClient {
 
     public void connect() throws IOException {
         try {
-            Socket sock = new Socket(ipAddress, tcpPort);
-            OutputStream outputStream = sock.getOutputStream();
+            Socket socket = new Socket(ipAddress, tcpPort);
+            OutputStream outputStream = socket.getOutputStream();
 
             FileInputStream fileInputStream = createFileInputStream("/home/fabio/map.txt");
             BufferedReader fileBufferReader = getBufferStreamReader(fileInputStream);
@@ -33,13 +33,13 @@ public class SocketClient {
             printOutputStream(outputStream, fileBufferReader);
             fileBufferReader.close();
 
-            InputStream inputStream = sock.getInputStream();
+            InputStream inputStream = socket.getInputStream();
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String response = bufferedReader.readLine();
 
             if (response == "/exit") {
-                sock.close();
+                socket.close();
             }
 
         } catch (IOException e) {
@@ -49,15 +49,10 @@ public class SocketClient {
     }
 
     private FileInputStream createFileInputStream(String fileName) throws FileNotFoundException {
-        try {
-            File file = new File(fileName);
-            FileInputStream fileInputStream = new FileInputStream(file);
+        File file = new File(fileName);
+        FileInputStream fileInputStream = new FileInputStream(file);
 
-            return fileInputStream;
-        } catch (FileNotFoundException e) {
-            throw new FileNotFoundException();
-        }
-
+        return fileInputStream;
     }
 
     public BufferedReader getBufferStreamReader(FileInputStream fileInputStream) {
