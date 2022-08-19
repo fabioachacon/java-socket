@@ -13,11 +13,11 @@ import java.io.Reader;
 import java.net.Socket;
 import java.util.stream.Stream;
 
-public class ClientSocket {
+public class SocketClient {
     private String ipAddress;
     private int tcpPort;
 
-    public ClientSocket(String ipAddress, int tcpPort) {
+    public SocketClient(String ipAddress, int tcpPort) {
         this.ipAddress = ipAddress;
         this.tcpPort = tcpPort;
     }
@@ -32,7 +32,6 @@ public class ClientSocket {
             BufferedReader fileBufferReader = getBufferStreamReader(fileInputStream);
 
             printOutputStream(outputStream, fileBufferReader);
-
             fileBufferReader.close();
 
             InputStream inputStream = sock.getInputStream();
@@ -74,7 +73,7 @@ public class ClientSocket {
 
         Stream<String> streamOfStrings = bufferedReader.lines();
         streamOfStrings.forEach(line -> {
-            if (line != null) {
+            if (line != null && !line.isEmpty()) {
                 printWriter.println(line + "\n");
             }
         });
