@@ -3,6 +3,7 @@ package com.demo.socket;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,6 +11,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.net.Socket;
+import java.util.stream.Stream;
 
 public class ClientSocket {
     private String ipAddress;
@@ -24,26 +26,17 @@ public class ClientSocket {
         try {
 
             Socket sock = new Socket(ipAddress, tcpPort);
+            OutputStream outputStream = sock.getOutputStream();
 
-            OutputStream output = sock.getOutputStream();
-            PrintWriter printWriter = new PrintWriter(output, true);
+            FileInputStream fileInputStream = createFileInputStream("/home/fabio/map.txt");
+            BufferedReader fileBufferReader = getBufferStreamReader(fileInputStream);
 
-            File file = new File("/home/fabio/map.txt");
-            FileInputStream fileInputStream = new FileInputStream(file);
+            printOutputStream(outputStream, fileBufferReader);
 
-            Reader fileInputStreamReader = new InputStreamReader(fileInputStream);
-            BufferedReader fileBufferReader = new BufferedReader(fileInputStreamReader);
-
-            String line, lines = "";
-            while ((line = fileBufferReader.readLine()) != null) {
-                lines += line + "\n\n";
-            }
-
-            printWriter.println(lines);
             fileBufferReader.close();
 
-            InputStream input = sock.getInputStream();
-            InputStreamReader inputStreamReader = new InputStreamReader(input);
+            InputStream inputStream = sock.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String response = bufferedReader.readLine();
 
@@ -54,6 +47,37 @@ public class ClientSocket {
         } catch (IOException e) {
             throw new IOException(e);
         }
+
+    }
+
+    private FileInputStream createFileInputStream(String fileName) throws FileNotFoundException {
+        try {
+            File file = new File(fileName);
+            FileInputStream fileInputStream = new FileInputStream(file);
+
+            return fileInputStream;
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException();
+        }
+
+    }
+
+    public BufferedReader getBufferStreamReader(FileInputStream fileInputStream) {
+        Reader fileInputStreamReader = new InputStreamReader(fileInputStream);
+        BufferedReader fileBufferReader = new BufferedReader(fileInputStreamReader);
+
+        return fileBufferReader;
+    }
+
+    private void printOutputStream(OutputStream outputStream, BufferedReader bufferedReader) throws IOException {
+        PrintWriter printWriter = new PrintWriter(outputStream, true);
+
+        Stream<String> streamOfStrings = bufferedReader.lines();
+        streamOfStrings.forEach(line -> {
+            if (line != null) {
+                printWriter.println(line + "\n");
+            }
+        });
 
     }
 
