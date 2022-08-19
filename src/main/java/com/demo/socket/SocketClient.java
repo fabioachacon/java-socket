@@ -24,7 +24,6 @@ public class SocketClient {
 
     public void connect() throws IOException {
         try {
-
             Socket sock = new Socket(ipAddress, tcpPort);
             OutputStream outputStream = sock.getOutputStream();
 
